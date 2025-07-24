@@ -2,21 +2,43 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
-func defaultResponse(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-        http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-        return
+func getTitle(w http.ResponseWriter, r *http.Request) {
+    res, err := http.Get("https://www.natomanga.com/")
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer res.Body.Close()
+
+    if res.StatusCode != 200 {
+        log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
     }
 
-	w.Header().Set("Content-Type", "application/json")
-	var response string = "Response"
-	json.NewEncoder(w).Encode(response)
+    doc, err := goquery.NewDocumentFromReader(res.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    links := make(map[string]string)
+    doc.Find(".doreamon > div > a").Each(func(i int, s *goquery.Selection) {
+        href := s.AttrOr("href","")
+        if href != "" {
+            short := strings.TrimPrefix(href,"https://www.natomanga.com/manga/")
+            links[short] = href
+        }
+    })
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(links)
 }
 
 func main() {
-	http.HandleFunc("/test",defaultResponse)
+	http.HandleFunc("/getRecents",getTitle)
 	http.ListenAndServe(":8080", nil)
 }

@@ -1,8 +1,8 @@
 # Build stage
 FROM golang:1.24 AS builder
 WORKDIR /app
-COPY config/go.mod ./
-COPY config/go.sum ./
+COPY src/go.mod ./
+COPY src/go.sum ./
 RUN go mod download
 COPY ./src ./src
 WORKDIR /app/src
