@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -26,10 +25,10 @@ func getTitle(w http.ResponseWriter, r *http.Request) {
     }
 
     links := make(map[string]string)
-    doc.Find(".doreamon > div > a").Each(func(i int, s *goquery.Selection) {
+    doc.Find(".doreamon h3 > .tooltip").Each(func(i int, s *goquery.Selection) {
         href := s.AttrOr("href","")
         if href != "" {
-            short := strings.TrimPrefix(href,"https://www.natomanga.com/manga/")
+            short := s.Text()
             links[short] = href
         }
     })
