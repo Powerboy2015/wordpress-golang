@@ -22,9 +22,15 @@ type Chapter struct {
 
 type manwha struct {
 	Name       string
+	Img        string
 	Chapters   []Chapter
 	LastUpdate string
 	Summary    string
+}
+
+type RecentUpdate struct {
+	Name string
+	Img  string
 }
 
 type Pair struct {
@@ -50,13 +56,31 @@ func getRecentlyUpdated(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	links := make(map[string]string)
-	doc.Find(".doreamon h3 > .tooltip").Each(func(i int, s *goquery.Selection) {
-		href := s.AttrOr("href", "")
+	links := make(map[string]RecentUpdate)
+	doc.Find(".doreamon > .itemupdate").Each(func(i int, s *goquery.Selection) {
+		data := make(map[string]string)
+
+		title := s.Find("h3 > a")
+		href := title.AttrOr("href", "not-found")
 		if href != "" {
-			short := s.Text()
-			links[short] = href
+			short := title.Text()
+			data["name"] = short
 		}
+
+		img := s.Find("img")
+		imgHref := img.AttrOr("src", "not-found")
+
+		if imgHref != "" {
+			data["image"] = imgHref
+		}
+
+		mangaLink := strings.Replace(href, PAGE_URL+"/manga/", "", -1)
+
+		links[mangaLink] = RecentUpdate{
+			Name: data["name"],
+			Img:  data["image"],
+		}
+
 	})
 
 	w.Header().Set("Content-Type", "application/json")
@@ -82,8 +106,12 @@ func getManwhaData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	title := doc.Find("h1").Text()
+
 	lastUpdate := doc.Find(".manga-info-text > li").Eq(3).Text()
+
 	summary := doc.Find("#contentBox").Text()
+
+	img := doc.Find(".manga-info-pic >img").AttrOr("src", "not-found")
 
 	chapters := make(map[int]string)
 	doc.Find(".chapter-list > * a").Each(func(i int, s *goquery.Selection) {
@@ -118,6 +146,7 @@ func getManwhaData(w http.ResponseWriter, r *http.Request) {
 
 	response := manwha{
 		Name:       title,
+		Img:        img,
 		Chapters:   sorted,
 		LastUpdate: lastUpdate,
 		Summary:    summary,

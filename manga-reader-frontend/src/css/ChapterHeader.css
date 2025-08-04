@@ -1,0 +1,9 @@
+.reader-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 20px;
+    background-color: rgba(22, 22, 22, 0.75);
+    padding: 8px;
+}
