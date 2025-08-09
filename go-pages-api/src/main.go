@@ -16,8 +16,8 @@ import (
 
 // Create sorted slice of chapters
 type Chapter struct {
-	Number int    `json:"number"`
-	Link   string `json:"link"`
+	Number float64 `json:"number"`
+	Link   string  `json:"link"`
 }
 
 type manwha struct {
@@ -74,7 +74,7 @@ func getRecentlyUpdated(w http.ResponseWriter, r *http.Request) {
 			data["image"] = imgHref
 		}
 
-		mangaLink := strings.Replace(href, PAGE_URL+"/manga/", "", -1)
+		mangaLink := strings.ReplaceAll(href, PAGE_URL+"/manga/", "")
 
 		links[mangaLink] = RecentUpdate{
 			Name: data["name"],
@@ -113,28 +113,28 @@ func getManwhaData(w http.ResponseWriter, r *http.Request) {
 
 	img := doc.Find(".manga-info-pic >img").AttrOr("src", "not-found")
 
-	chapters := make(map[int]string)
+	chapters := make(map[float64]string)
 	doc.Find(".chapter-list > * a").Each(func(i int, s *goquery.Selection) {
 		href := s.AttrOr("href", "")
 		if href != "" {
 			short := s.Text()
 			chapterNum := strings.Replace(short, "Chapter ", "", 1)
 
-			chapterInt, err := strconv.Atoi(chapterNum)
+			chapterInt, err := strconv.ParseFloat(chapterNum, 64)
 			if err != nil {
 				fmt.Println("Error converting string to int:", err)
 				return
 			}
 
-			chapters[chapterInt] = strings.Replace(href, PAGE_URL+"/manwha/", "", -1)
+			chapters[chapterInt] = strings.ReplaceAll(href, PAGE_URL+"/manwha/", "")
 		}
 	})
 
-	keys := make([]int, 0, len(chapters))
+	keys := make([]float64, 0, len(chapters))
 	for k := range chapters {
 		keys = append(keys, k)
 	}
-	sort.Ints(keys)
+	sort.Float64s(keys)
 
 	var sorted []Chapter
 	for _, k := range keys {
