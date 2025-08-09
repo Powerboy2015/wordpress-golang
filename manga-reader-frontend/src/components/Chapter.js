@@ -2,71 +2,59 @@ import { useState, useEffect, useRef } from 'react';
 import '../css/Chapter.css';
 import { useParams } from 'react-router-dom';
 import ChapterHeader from './ChapterHeader';
+import ChapterPages from './ChapterPages';
 
 function Chapter() {
-    const [data, setData] = useState(null);
-    const { manga, chapter } = useParams();
+	const [data, setData] = useState(null);
+	const { manga, chapterNum } = useParams();
 
-    let origin = new URL(window.location);
-    origin.pathname = "/getChapter";
-    origin.searchParams.append("manga", manga);
-    origin.searchParams.append("chapter", chapter);
+	const [chapter, setChapter] = useState(null);
+	setChapter(chapterNum);
 
-    origin.port = "8080";
-    console.log(origin);
+	let origin = new URL(window.location);
+	origin.pathname = "/getChapter";
+	origin.searchParams.append("manga", manga);
+	origin.searchParams.append("chapter", chapter.replace(".", "-"));
 
-    const containerRef = useRef(null);
+	origin.port = "8080";
+	console.log(origin);
 
-    useEffect(() => {
-        const container = containerRef.current;
+	const containerRef = useRef(null);
 
-        const handleScroll = () => {
-            if (!container) return;
+	//Check to see if you have scrolled until the end of the website
+	useEffect(() => {
+		const container = containerRef;
 
-            const isAtBottom =
-                container.scrollHeight - container.scrollTop === container.clientHeight;
-            console.log(container.scrollHeight - container.scrollTop);
+		const handleScroll = () => {
 
-            if (isAtBottom) {
-                console.log('Reached the bottom!');
-                // You could trigger a callback or load more content here
-            }
-        };
+			const isAtBottom =
+				document.querySelector("body").clientHeight - window.innerHeight === window.scrollY;
+			if (isAtBottom) {
+				console.log('Reached the bottom!');
+				// You could trigger a callback or load more content here
+			}
+		};
 
-        if (container) {
-            window.addEventListener('scroll', handleScroll);
-            console.log("scroller added");
-        }
+		if (container) {
+			window.addEventListener('scroll', handleScroll);
+			console.log("scroller added");
+		}
 
-        return () => {
-            if (container) {
-                window.removeEventListener('scroll', handleScroll);
-                console.log("scroller removed");
-            }
-        };
-    }, []);
+		return () => {
+			if (container) {
+				window.removeEventListener('scroll', handleScroll);
+				console.log("scroller removed");
+			}
+		};
+	}, [containerRef]);
 
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const res = await fetch(origin);
-            const json = await res.json();
-            setData(json);
-        };
-
-        fetchData();
-    }, []);
-
-    if (!data) return <div>Loading...</div>;
-    return (
-        <div ref={containerRef} className={'chapter-container chapter-' + chapter}>
-            <ChapterHeader currentChapter={chapter} />
-            {data.map((chapter, index) => (
-                <div className='chapter'>
-                    <img src={origin.origin + '/getImage?url=' + chapter} alt={index} />
-                </div>))}
-        </div>
-    )
+	if (!data) return <div>Loading...</div>;
+	return (<>
+		<ChapterHeader currentChapter={chapter} main={manga} />
+		<div ref={containerRef} className={'chapter-container chapter-' + chapter}>
+			<ChapterPages chaperNumber={chapterNum} />
+		</div>
+	</>
+	)
 }
 export default Chapter;
