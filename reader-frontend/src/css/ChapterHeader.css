@@ -1,0 +1,31 @@
+.reader-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 20px;
+    background-color: rgb(22, 22, 22);
+    padding: 8px;
+
+    gap: 1rem;
+
+    display:flex;
+    flex-direction:row;
+
+	> * {
+	   font-family: "FsPixel";
+	   font-size: 32px;
+	}
+}
+
+.text-underline {
+	text-decoration: underline; 
+}
+
+a{
+	color:inherit;
+}
+
+.hidden{
+	display:none;
+}
