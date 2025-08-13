@@ -4,25 +4,26 @@ function ChapterPages({ chapterNum, manga }) {
 	let origin = new URL(window.location);
 	origin.pathname = "/getChapter";
 	origin.searchParams.append("manga", manga);
-	origin.searchParams.append("chapter", chapterNum.replace(".", "-"));
+	origin.searchParams.append("chapter", chapterNum);
 
 	origin.port = "8080";
-	console.log(origin);
 
 	const [data, setData] = useState(null);
 	useEffect(() => {
 		const fetchData = async () => {
 			const res = await fetch(origin);
 			const json = await res.json();
-			console.log(json);
 			setData(json);
 		};
 
 		fetchData();
 	}, []);
 
+	if (!data) return <div>Loading...</div>;
 	return (<>
-		{data.map((url) => (<img src={origin.origin + "/getImage?url=" + url} />))}
+		<div className="chapter-imgs">
+			{data.map((url) => (<img src={origin.origin + "/getImage?url=" + url} />))}
+		</div>
 	</>)
 }
 

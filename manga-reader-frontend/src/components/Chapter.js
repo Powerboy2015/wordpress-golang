@@ -1,60 +1,71 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import '../css/Chapter.css';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ChapterHeader from './ChapterHeader';
 import ChapterPages from './ChapterPages';
 
 function Chapter() {
-	const [data, setData] = useState(null);
-	const { manga, chapterNum } = useParams();
+    const { manga, chapter } = useParams();
+    const navigate = useNavigate();
 
-	const [chapter, setChapter] = useState(null);
-	setChapter(chapterNum);
+    const [chapters, setChapters] = useState([Number(chapter)]);
+    const loadingRef = useRef(false);
+    const chaptersRef = useRef(chapters);
 
-	let origin = new URL(window.location);
-	origin.pathname = "/getChapter";
-	origin.searchParams.append("manga", manga);
-	origin.searchParams.append("chapter", chapter.replace(".", "-"));
+    // Keep refs in sync with state
+    useEffect(() => {
+        chaptersRef.current = chapters;
+    }, [chapters]);
 
-	origin.port = "8080";
-	console.log(origin);
+    const setLoading = (value) => {
+        loadingRef.current = value;
+        setLoadingState(value); // call actual useState setter below
+    };
+    const [loadingState, setLoadingState] = useState(false);
 
-	const containerRef = useRef(null);
+    useEffect(() => {
+        const handleScroll = () => {
+            const pixelOffset = 50;
+            const isAtBottom =
+                document.body.clientHeight - window.innerHeight <= Math.round(window.scrollY) + pixelOffset;
 
-	//Check to see if you have scrolled until the end of the website
-	useEffect(() => {
-		const container = containerRef;
+            if (isAtBottom && !loadingRef.current) {
+                console.log('Reached the bottom!');
+                setLoading(true);
 
-		const handleScroll = () => {
+                setChapters(prev => {
+                    const nextChapter = prev[prev.length - 1] + 1;
+                    navigate(`/read/${manga}/${nextChapter}`, { replace: true });
+                    return [...prev, nextChapter];
+                });
 
-			const isAtBottom =
-				document.querySelector("body").clientHeight - window.innerHeight === window.scrollY;
-			if (isAtBottom) {
-				console.log('Reached the bottom!');
-				// You could trigger a callback or load more content here
-			}
-		};
 
-		if (container) {
-			window.addEventListener('scroll', handleScroll);
-			console.log("scroller added");
-		}
+                setTimeout(() => {
+                    setLoading(false);
+                }, 2000);
+            }
+        };
 
-		return () => {
-			if (container) {
-				window.removeEventListener('scroll', handleScroll);
-				console.log("scroller removed");
-			}
-		};
-	}, [containerRef]);
+        window.addEventListener('scroll', handleScroll);
+        console.log("scroller added");
 
-	if (!data) return <div>Loading...</div>;
-	return (<>
-		<ChapterHeader currentChapter={chapter} main={manga} />
-		<div ref={containerRef} className={'chapter-container chapter-' + chapter}>
-			<ChapterPages chaperNumber={chapterNum} />
-		</div>
-	</>
-	)
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            console.log("scroller removed");
+        };
+    }, [manga, navigate]);
+
+    return (
+        <>
+            <ChapterHeader currentChapter={chapters[chapters.length - 1]} main={manga} />
+            <div className="chapter-container">
+                {chapters.map(chap => (
+                    <ChapterPages key={chap} chapterNum={chap} manga={manga} />
+                ))}
+                {loadingState && <div className="loading">Loading next chapter...</div>}
+            </div>
+        </>
+    );
 }
+
 export default Chapter;

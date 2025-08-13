@@ -1,7 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../css/ChapterHeader.css";
 
 function ChapterHeader({ currentChapter, main }) {
+
+	const [chapterNum, setChapterNum] = useState(currentChapter);
 
 	const readerEl = useRef(null);
 
@@ -43,11 +45,16 @@ function ChapterHeader({ currentChapter, main }) {
 		};
 	}, []);
 
+	useEffect(() => {
+		setChapterNum(currentChapter);
+		console.log(currentChapter);
+	}, [currentChapter])
+
 
 	return (<>
 		<section ref={readerEl} className="reader-header">
 			<a href={window.origin + "/read/" + main} className="text-underline">Back</a>
-			<span>Chapter {currentChapter}</span>
+			<span>Chapter {chapterNum}</span>
 		</section>
 	</>)
 }

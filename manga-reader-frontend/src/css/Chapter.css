@@ -5,9 +5,13 @@
     align-items: center;
 }
 
-.chapter>img {
+.chapter-imgs>img {
     max-width: 100%;
     display: block;
+}
+
+.chapter-imgs {
+    min-height: 100vh;
 }
 
 * {
