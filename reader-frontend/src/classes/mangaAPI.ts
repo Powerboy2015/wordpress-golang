@@ -4,8 +4,9 @@ import type {MangaData, MangaOverview} from "../types/index";
 export class MangaAPI {
     public baseUrl: URL;
 
-    constructor(_baseUrl:string) {
-        const _url: URL = new URL(_baseUrl);
+    // XXX Needs an rework for prod.
+    constructor(_baseUrl?:string) {
+        const _url: URL = new URL(_baseUrl ?? window.location.href);
         _url.port = "8080";
         this.baseUrl = _url;
 
