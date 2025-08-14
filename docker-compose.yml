@@ -9,9 +9,9 @@ services:
       - .env
 
   reader-frontend:
-    build: ./manga-reader-frontend
+    build: ./reader-frontend
     volumes:
-      - ./manga-reader-frontend:/app:delegated
+      - ./reader-frontend:/app:delegated
       - /app/node_modules
     env_file:
       - .env
