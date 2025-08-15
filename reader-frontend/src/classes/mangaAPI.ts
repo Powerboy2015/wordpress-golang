@@ -7,7 +7,7 @@ export class MangaAPI {
     // XXX Needs an rework for prod.
     constructor(_baseUrl?:string) {
         const _url: URL = new URL(_baseUrl ?? window.location.href);
-        _url.port = "8080";
+        _url.port = "8083";
         this.baseUrl = _url;
 
     }

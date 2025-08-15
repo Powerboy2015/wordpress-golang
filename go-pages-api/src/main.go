@@ -10,7 +10,9 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
+	"example.com/m/v2/redis"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -41,6 +43,14 @@ type Pair struct {
 var PAGE_URL string = os.Getenv("pageURL")
 
 func getRecentlyUpdated(w http.ResponseWriter, r *http.Request) {
+	redisKey := "Recents"
+	cache, err := redis.Get[map[string]RecentUpdate](redisKey)
+	if cache != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(cache)
+		return
+	}
+
 	res, err := http.Get(PAGE_URL)
 	if err != nil {
 		log.Fatal(err)
@@ -83,6 +93,7 @@ func getRecentlyUpdated(w http.ResponseWriter, r *http.Request) {
 
 	})
 
+	redis.Set(redisKey, links, 5*time.Minute)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(links)
 }
@@ -90,6 +101,14 @@ func getRecentlyUpdated(w http.ResponseWriter, r *http.Request) {
 func getManwhaData(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	manwhaName := query.Get("url")
+	redisKey := redis.HashKey(manwhaName)
+
+	cache, err := redis.Get[manwha](redisKey)
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(cache)
+		return
+	}
 
 	res, err := http.Get(PAGE_URL + "/manga/" + manwhaName)
 	if err != nil {
@@ -152,6 +171,8 @@ func getManwhaData(w http.ResponseWriter, r *http.Request) {
 		Summary:    summary,
 	}
 
+	redis.Set(redisKey, response, 30*time.Minute)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -159,6 +180,15 @@ func getChapter(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	mangaName := query.Get("manga")
 	chapterStr := query.Get("chapter")
+
+	redisKey := redis.HashKey(fmt.Sprintf("%s:%s", mangaName, chapterStr))
+
+	cache, err := redis.Get[[]string](redisKey)
+	if cache != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(cache)
+		return
+	}
 
 	res, err := http.Get(PAGE_URL + "/manga/" + mangaName + "/chapter-" + chapterStr)
 	if err != nil {
@@ -176,6 +206,8 @@ func getChapter(w http.ResponseWriter, r *http.Request) {
 		images = append(images, imgLink)
 	})
 
+	redis.Set(redisKey, images, 72*time.Hour)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(images)
 }
 
@@ -226,9 +258,13 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	redis.InitRedis()
 	http.Handle("/getRecents", enableCORS(http.HandlerFunc(getRecentlyUpdated)))
+
 	http.Handle("/getManwhaData", enableCORS(http.HandlerFunc(getManwhaData)))
+
 	http.Handle("/getChapter", enableCORS(http.HandlerFunc(getChapter)))
+
 	http.Handle("/getImage", enableCORS(http.HandlerFunc(getImage)))
 	http.ListenAndServe(":8080", nil)
 }
