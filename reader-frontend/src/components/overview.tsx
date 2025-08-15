@@ -1,30 +1,18 @@
 import "../css/Overview.css";
-import { useState, useEffect, useMemo } from "react";
+import {useMemo } from "react";
 import type { MangaOverview } from "../types";
 import { MangaAPI } from "../classes/mangaAPI";
+import { useApi } from "../hooks/useApi";
 
 function Overview() {
-    const [data, setData] = useState<Record<string,MangaOverview>>({});
-
     // stops useEffect from reloading because of mangaAPI, because it reuses the mangaAPI object if dependencies didn't change.
     const mangaApi = useMemo(() => new MangaAPI(window.location.href),[]);
     
-    useEffect(() => {
-        const fetchData = async () => {
-            const _data = await mangaApi.fetchOverview();
-            if(_data)
-            {
-                setData(_data);
-                return;
-            }
-            console.error("no overview found!");
+    const [data, loading] = useApi<Record<string,MangaOverview>>(
+        () => mangaApi.fetchOverview()
+    )
 
-        };
-
-        fetchData();
-    },[mangaApi]);
-
-    if (!data) return (<h1>Loading....</h1>);
+    if (loading || !data) return (<h1>Loading....</h1>);
     return (
         <>
             <div className="recentsOverview">

@@ -48,11 +48,11 @@ export class MangaAPI {
     }
 
     // gets the list of image links.
-    async fetchChapter(_manga: string, _chapter:number): Promise<string[] | false> {
+    async fetchChapter(_manga: string, _chapter:string): Promise<string[] | false> {
         const url: URL = this.baseUrl;
         url.pathname = "/getChapter";
         url.searchParams.set("manga",_manga);
-        url.searchParams.set("chapter",_chapter.toString());
+        url.searchParams.set("chapter",_chapter.replaceAll(".","-"));
 
         const resp = await fetch(url);
 

@@ -8,9 +8,10 @@ function Chapter() {
     const { manga, chapter } = useParams();
     const navigate = useNavigate();
 
-    const [chapters, setChapters] = useState([Number(chapter)]);
+    const [chapters, setChapters] = useState([String(chapter)]);
     const loadingRef = useRef(false);
     const chaptersRef = useRef(chapters);
+    const tapref = useRef<HTMLDivElement>(null);
 
     // Keep refs in sync with state
     useEffect(() => {
@@ -57,8 +58,8 @@ function Chapter() {
 
     return (
         <>
-            <ChapterHeader currentChapter={chapters[chapters.length - 1]} main={manga ?? "none"} />
-            <div className="chapter-container">
+            <ChapterHeader currentChapter={chapters[chapters.length - 1]} main={manga ?? "none"} tapRef={tapref} />
+            <div className="chapter-container" ref={tapref}>
                 {chapters.map(chap => (
                     <ChapterPages key={chap} chapterNum={chap ?? "0"} manga={manga ??  "none"} />
                 ))}

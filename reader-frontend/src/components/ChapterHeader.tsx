@@ -3,7 +3,7 @@ import "../css/ChapterHeader.css";
 import { useTap } from "../hooks/useTap";
 
 interface ChapterHeaderProp{
-    currentChapter: number;
+    currentChapter: string;
     main:string;
     tapRef: RefObject<HTMLElement | null> ;
 }
