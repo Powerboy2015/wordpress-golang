@@ -44,8 +44,8 @@ var PAGE_URL string = os.Getenv("pageURL")
 
 func getRecentlyUpdated(w http.ResponseWriter, r *http.Request) {
 	redisKey := "Recents"
-	cache, err := redis.Get[map[string]RecentUpdate](redisKey)
-	if cache != nil {
+	cache, found, err := redis.Get[map[string]RecentUpdate](redisKey)
+	if found {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(cache)
 		return
@@ -103,8 +103,8 @@ func getManwhaData(w http.ResponseWriter, r *http.Request) {
 	manwhaName := query.Get("url")
 	redisKey := redis.HashKey(manwhaName)
 
-	cache, err := redis.Get[manwha](redisKey)
-	if err == nil {
+	cache, found, err := redis.Get[manwha](redisKey)
+	if found {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(cache)
 		return
@@ -183,8 +183,8 @@ func getChapter(w http.ResponseWriter, r *http.Request) {
 
 	redisKey := redis.HashKey(fmt.Sprintf("%s:%s", mangaName, chapterStr))
 
-	cache, err := redis.Get[[]string](redisKey)
-	if cache != nil {
+	cache, found, err := redis.Get[[]string](redisKey)
+	if found {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(cache)
 		return

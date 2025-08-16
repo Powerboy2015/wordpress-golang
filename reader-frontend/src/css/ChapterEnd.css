@@ -1,0 +1,12 @@
+.chapter-end{
+    min-height: 250px;
+    background: rgb(20, 20, 20);
+    width: 100%;
+    padding-top: 3rem;
+}
+
+.manga-title{
+    margin-top: 1rem;
+    font-size: 1.25rem;
+    color: hsl(0, 0%, 65%);
+}

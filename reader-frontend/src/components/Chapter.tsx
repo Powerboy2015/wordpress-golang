@@ -3,12 +3,11 @@ import '../css/Chapter.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChapterHeader from './ChapterHeader';
 import ChapterPages from './ChapterPages';
-
 function Chapter() {
     const { manga, chapter } = useParams();
     const navigate = useNavigate();
 
-    const [chapters, setChapters] = useState([String(chapter)]);
+    const [chapters, setChapters] = useState([Number(parseFloat(chapter ?? "0"))]);
     const loadingRef = useRef(false);
     const chaptersRef = useRef(chapters);
     const tapref = useRef<HTMLDivElement>(null);
@@ -20,13 +19,13 @@ function Chapter() {
 
     const setLoading = (value:boolean) => {
         loadingRef.current = value;
-        setLoadingState(value); // call actual useState setter below
+        // setLoadingState(value); // call actual useState setter below
     };
-    const [loadingState, setLoadingState] = useState(false);
+    // const [loadingState, setLoadingState] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
-            const pixelOffset = 50;
+            const pixelOffset = 200;
             const isAtBottom =
                 document.body.clientHeight - window.innerHeight <= Math.round(window.scrollY) + pixelOffset;
 
@@ -43,7 +42,7 @@ function Chapter() {
 
                 setTimeout(() => {
                     setLoading(false);
-                }, 2000);
+                }, 1000);
             }
         };
 
@@ -58,12 +57,12 @@ function Chapter() {
 
     return (
         <>
-            <ChapterHeader currentChapter={chapters[chapters.length - 1]} main={manga ?? "none"} tapRef={tapref} />
+            <ChapterHeader currentChapter={chapters[chapters.length - 1].toString()} main={manga ?? "none"} tapRef={tapref} />
             <div className="chapter-container" ref={tapref}>
-                {chapters.map(chap => (
-                    <ChapterPages key={chap} chapterNum={chap ?? "0"} manga={manga ??  "none"} />
+                {chapters.map(chap => (<>
+                    <ChapterPages key={chap} chapterNum={chap.toString() ?? "0"} manga={manga ??  "none"} />
+                </>
                 ))}
-                {loadingState && <div className="loading">Loading next chapter...</div>}
             </div>
         </>
     );

@@ -43,7 +43,7 @@ func InitRedis() {
 	}
 }
 
-func Get[T any](key string) (T, error) {
+func Get[T any](key string) (T, bool, error) {
 	var zero T
 	// Gets redis key results
 	val, err := Rdb.Get(ctx, key).Result()
@@ -51,23 +51,23 @@ func Get[T any](key string) (T, error) {
 	// redis nil check
 	if err == redis.Nil {
 		fmt.Printf("uncached request, chaching %s\n", key)
-		return zero, nil
+		return zero, false, nil
 	}
 
 	// error check
 	if err != nil {
 		fmt.Printf("redis GET error for %s: %v\n", key, err)
-		return zero, nil
+		return zero, false, nil
 	}
 
 	var result T
 	// checks if json struct is valid.
 	if err := json.Unmarshal([]byte(val), &result); err != nil {
 		fmt.Printf("redis GET error for %s: %v\n", key, err)
-		return zero, err
+		return zero, false, err
 	}
 	fmt.Printf("redis cache found for: %s \n", key)
-	return result, nil
+	return result, true, nil
 }
 
 func Set[T any](key string, value T, ttl time.Duration) error {
