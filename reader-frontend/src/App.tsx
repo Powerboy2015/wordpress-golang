@@ -1,9 +1,8 @@
 import { BrowserRouter,Routes,Route } from 'react-router-dom';
-import Overview from './components/overview';
 import './css/style.css';
 import './App.css';
-import Manga from './components/Manga';
-import Chapter from './components/Chapter';
+import HomePage from './components/HomePage';
+import NavUI from './components/NavUI';
 
 function App() {
 
@@ -13,9 +12,7 @@ function App() {
       <header className="App-header">
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Overview />} />
-            <Route path='/read/:manga/:chapter' element={<Chapter />} />
-            <Route path='/read/:manga' element={<Manga />} />
+            <Route path='/' element={<NavUI><HomePage/></NavUI>} />
           </Routes>
         </BrowserRouter>
       </header>
