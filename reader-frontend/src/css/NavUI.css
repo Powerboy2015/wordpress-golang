@@ -14,12 +14,16 @@
         padding: 8px;
         font-size: 32px;
         border-radius: 8px;
-        max-width: 385px;
+        /* max-width: 385px; */
         height: 50px;
 
-        .mobile-btn{
+        .mobile-menu-btn{
             display: flex;
             align-items: center;
+
+            &.active > svg{
+                color: #3340CC !important;
+            }
         }
     }
 }

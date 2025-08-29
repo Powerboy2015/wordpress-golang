@@ -1,6 +1,8 @@
 import type {MangaData, MangaOverview} from "../types/index";
 
-
+/**
+ * Simple api we can use to get data from our golang API.
+ */
 export class MangaAPI {
     public baseUrl: URL;
 
@@ -21,7 +23,6 @@ export class MangaAPI {
 
         const resp = await fetch(url);
 
-        // escapes if bad response.
         if(!resp.ok) {
             return false;
         }
