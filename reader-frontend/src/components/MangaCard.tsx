@@ -14,7 +14,7 @@ export default function MangaCard({manga, link}:MangaCardProps)
     <div className="manga-card">
         <a href={"/manga/" + link}className="manga-card-inner">
         <div className="manga-image">
-            <img src={mangaAPI.baseUrl.origin + "/getImage?url=" + manga.Img} alt="" />
+            <img src={mangaAPI.baseUrl.origin + "/api/getImage?url=" + manga.Img} alt="" />
         </div>
         <div className="manga-title">
             <p className="font-LowresPixel">{manga.Name}</p>

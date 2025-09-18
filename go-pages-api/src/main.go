@@ -259,12 +259,12 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	redis.InitRedis()
-	http.Handle("/getRecents", enableCORS(http.HandlerFunc(getRecentlyUpdated)))
+	http.Handle("/api/getRecents", enableCORS(http.HandlerFunc(getRecentlyUpdated)))
 
-	http.Handle("/getManwhaData", enableCORS(http.HandlerFunc(getManwhaData)))
+	http.Handle("/api/getManwhaData", enableCORS(http.HandlerFunc(getManwhaData)))
 
-	http.Handle("/getChapter", enableCORS(http.HandlerFunc(getChapter)))
+	http.Handle("/api/getChapter", enableCORS(http.HandlerFunc(getChapter)))
 
-	http.Handle("/getImage", enableCORS(http.HandlerFunc(getImage)))
+	http.Handle("/api/getImage", enableCORS(http.HandlerFunc(getImage)))
 	http.ListenAndServe(":8080", nil)
 }

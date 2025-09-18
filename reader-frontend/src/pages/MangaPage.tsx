@@ -18,11 +18,13 @@ export default function MangaPage()
 
     if (loading || !data) return (<h1>Loading...</h1>)
     console.log(data);
+
+    
     return(<> 
         <div className="manga">
             <div className="banner">
                 <div className="banner-img">
-                    <img src={mangaAPI.baseUrl.origin + "/getImage?url=" + data.Img} alt="" />
+                    <img src={mangaAPI.baseUrl.origin + "/api/getImage?url=" + data.Img} alt="" />
                     <div className="banner-overlay">
                         <a href="/" className="back-btn"><ArrowBack fontSize={"large"} /></a>
                         <div className="title">

@@ -9,7 +9,7 @@ export class MangaAPI {
     // XXX Needs an rework for prod.
     constructor(_baseUrl?:string) {
         const _url: URL = new URL(_baseUrl ?? window.location.href);
-        _url.port = "8083";
+        _url.pathname = "";
         this.baseUrl = _url;
 
     }
@@ -19,7 +19,7 @@ export class MangaAPI {
 
         // sets up url to fets overview.
         const url: URL = this.baseUrl;
-        url.pathname = "/getRecents";
+        url.pathname = "/api/getRecents";
 
         const resp = await fetch(url);
 
@@ -32,10 +32,14 @@ export class MangaAPI {
         return data;
     }
 
-    // gets the info of a manga.
+    /**
+     * Fetches the data for a specific manga.
+     * @param manga the name of the manga
+     * @returns the manga data or false if not found
+     */
     async fetchMangaData(manga: string): Promise<MangaData | false> {
         const url: URL = this.baseUrl;
-        url.pathname = "/getManwhaData";
+        url.pathname = "/api/getManwhaData";
         url.searchParams.set("url",manga);
 
         const resp = await fetch(url);
@@ -51,7 +55,7 @@ export class MangaAPI {
     // gets the list of image links.
     async fetchChapter(_manga: string, _chapter:string): Promise<string[] | false> {
         const url: URL = this.baseUrl;
-        url.pathname = "/getChapter";
+        url.pathname = "/api/getChapter";
         url.searchParams.set("manga",_manga);
         url.searchParams.set("chapter",_chapter.replaceAll(".","-"));
 
