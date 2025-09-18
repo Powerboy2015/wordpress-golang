@@ -1,4 +1,11 @@
 services:
+  nignx:
+    image: "nginx"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+    - "4000:4000"
+
   go-api:
     build: ./go-pages-api
     depends_on:
@@ -14,7 +21,9 @@ services:
       - .env
 
   reader-frontend:
-    build: ./reader-frontend
+    build: 
+      context: ./reader-frontend
+      target: prod
     volumes:
       - ./reader-frontend:/app:delegated
       - /app/node_modules
