@@ -3,6 +3,7 @@ import { useEffect, useRef} from "react";
 export function useScrollEnd(
     _run: () => Promise<void>,
     _pixelOffset:number = 150,
+    _delay:number = 300
 ) {
     const loadingRef = useRef<boolean>(false);
 
@@ -16,7 +17,7 @@ export function useScrollEnd(
                 try{
                     await _run();
                 } finally {
-                    loadingRef.current = false;
+                    setTimeout(() => { loadingRef.current = false; }, _delay);
                 }
             }
         };

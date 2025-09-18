@@ -14,7 +14,7 @@ export interface MangaData {
 }
 
 interface Chapter{
-    number: string;
+    number: number;
     link:   string;
     // images: string[] | null;
 }
