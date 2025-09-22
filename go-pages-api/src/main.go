@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"example.com/m/v2/functions/search"
 	"example.com/m/v2/redis"
 	"github.com/PuerkitoBio/goquery"
 )
@@ -258,6 +259,7 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
 	redis.InitRedis()
 	http.Handle("/api/getRecents", enableCORS(http.HandlerFunc(getRecentlyUpdated)))
 
@@ -266,5 +268,17 @@ func main() {
 	http.Handle("/api/getChapter", enableCORS(http.HandlerFunc(getChapter)))
 
 	http.Handle("/api/getImage", enableCORS(http.HandlerFunc(getImage)))
-	http.ListenAndServe(":8080", nil)
+
+	http.Handle("/api/search", enableCORS(http.HandlerFunc(search.FindManga)))
+	
+	// Create server with timeouts
+	server := &http.Server{
+		Addr:         ":8080",
+		ReadTimeout:  60 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		IdleTimeout:  120 * time.Second,
+	}
+	
+	log.Println("Server starting on port 8080")
+	log.Fatal(server.ListenAndServe())
 }
