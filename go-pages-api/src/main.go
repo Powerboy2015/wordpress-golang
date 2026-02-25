@@ -270,15 +270,5 @@ func main() {
 	http.Handle("/api/getImage", enableCORS(http.HandlerFunc(getImage)))
 
 	http.Handle("/api/search", enableCORS(http.HandlerFunc(search.FindManga)))
-	
-	// Create server with timeouts
-	server := &http.Server{
-		Addr:         ":8080",
-		ReadTimeout:  60 * time.Second,
-		WriteTimeout: 60 * time.Second,
-		IdleTimeout:  120 * time.Second,
-	}
-	
-	log.Println("Server starting on port 8080")
-	log.Fatal(server.ListenAndServe())
+	http.ListenAndServe(":8080", nil)
 }
