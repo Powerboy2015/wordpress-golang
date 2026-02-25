@@ -1,0 +1,25 @@
+# Build outputs
+bin/
+obj/
+out/
+
+# VS / Rider / IDE files
+.vs/
+*.user
+*.suo
+*.idea/
+
+# NuGet packages
+*.nupkg
+packages/
+.nuget/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker temp artifacts (optional)
+docker-compose.override.yml
