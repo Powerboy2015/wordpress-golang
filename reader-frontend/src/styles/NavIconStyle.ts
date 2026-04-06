@@ -1,0 +1,1 @@
+export const NavIconStyle: React.CSSProperties = {fontSize: 32};

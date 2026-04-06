@@ -1,18 +1,4 @@
 services:
-  go-api:
-    build: ./go-pages-api
-    depends_on:
-      - redis
-    ports:
-      - "8083:8080"
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    volumes:
-      - ./go-pages-api/src:/app
-    env_file:
-      - .env
-
   reader-frontend:
     build: ./reader-frontend
     volumes:

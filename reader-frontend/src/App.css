@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 .App {
   text-align: center;
 }
@@ -13,26 +15,8 @@
   }
 }
 
-.App-header {
-  background-color: #141414;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.App {
+  background-color: #1A1A1A;
+  min-height: 100dvh;
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
