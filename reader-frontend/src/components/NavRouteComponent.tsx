@@ -1,10 +1,11 @@
+import { Link } from "react-router-dom"
 
 interface NavRouteProps {
     route: string
     children: React.ReactNode
 }
 export default function NavRouteComponent({children,route}: NavRouteProps) {
-    return<a href={route} className="text-[#D2D0C3]">
+    return<Link to={route} className="text-[#D2D0C3]">
         {children}
-    </a>
+    </Link>
 }

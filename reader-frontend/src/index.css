@@ -17,6 +17,7 @@ code {
   font-family: Jersey10;
   /* set name */
   src: url(fonts/Jersey10.ttf);
+  line-height: 2;
   /* url of the font */
 }
 
